@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+
 var User = require('../../models/user');
 //var bodyParser = require('body-parser');
 
@@ -8,6 +9,7 @@ var User = require('../../models/user');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
+  
   
   User.find({},function(err, users){
     if(err){
@@ -39,7 +41,7 @@ router.post('/', function(req, res, next) {
     username: req.body.username,
     email: req.body.email,
     first_name: req.body.first_name,
-    last_name: req.body.last_name,
+    last_name: req.body.last_name
   }), function(err, user){
 
     if(err){
@@ -101,12 +103,40 @@ router.put('/', function(req,res,next){
 router.delete('/:userId', function(req,res,next){
   var userId = req.params.userId;
 
-  User.remove({'_id':userId}, function(err,removed){
+  User.remove({'_id':userId}, function(err,removed){//Register a new user
+    
     if(err){
       return res.json({success:false, error:err});
     }
     return res.json({success:true, status: removed});
 
   });
+});
+//Register a new user
+router.post('/register',function(req, res, next){
+  var data = req.body;
+
+  User.register(new User({
+    username: data.username,
+    email: data.email,
+    first_name: data.first_name,
+    last_name: data.last_name
+  }), 
+  data.password, 
+  function(err, user){
+    if(err){
+      return res.json({
+        success: false,
+        user: req.body,
+        errors: err
+      });  
+    }
+    return res.json({
+        success: true,
+        user: user
+    });
+
+  });
+
 });
 module.exports = router;
