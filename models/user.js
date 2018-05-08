@@ -37,4 +37,5 @@ User.pre('save', function(next){
 
 User.plugin(uniqueValidator);
 
+
 module.exports = mongoose.model('User', User);
