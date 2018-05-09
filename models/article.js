@@ -28,21 +28,6 @@ var Article = new Schema({
         type: String,
     },
 
-    /*hash: {
-        type: String,
-        required: [
-            true,
-            'there was a problem creating your article name'
-        ]
-    },
-    salt: {
-        type: String,
-        required: [
-            true,
-            'there was a problem creating your article name'  
-        ]
-    },*/
-
     created:{
         type: Date,
         default: Date.now
@@ -50,10 +35,10 @@ var Article = new Schema({
 
     published:{
         type: Date,
-        required: [
+        /*required: [
             true,
             'Please enter a publication date.',
-        ]
+        ]*/
     },
     modified:{
         type: Date,
@@ -61,12 +46,20 @@ var Article = new Schema({
     }
 });
 
-Aritcle.pre('save', function(next){
-    this.modified = new Date().toISOString();
+//Auto set the slug prior to validation
+Article.pre('validate', function(next){
+    this.slug = slug(this.title).toLowerCase();
     next();
 });
 
-Aritcle.plugin(uniqueValidator);
+//Auto set the modified date prior to save
+Article.pre('save', function(next){
+    this.modified = new Date().toISOString();
+    next();
+
+});
+
+Article.plugin(uniqeValidator);
 
 
 module.exports = mongoose.model('Aritcle', Aritcle);

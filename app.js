@@ -1,9 +1,9 @@
-var createError = require('http-errors');
+//var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var session = require('express-session');
+//var session = require('express-session');
 var mongoose = require('mongoose');
 var User = require('./models/user');
 var indexRouter = require('./routes/index');
@@ -101,7 +101,8 @@ app.use(function(req,res,next){
   var whitelist = [
     '/',
     '/favicon.ico',
-    '/users/login'
+    '/users/login',
+    '/users/register'
   ];
 
   if(whitelist.indexOf(req.url) !== -1){
