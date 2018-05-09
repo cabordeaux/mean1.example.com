@@ -4,25 +4,31 @@ var uniqueValidator = require('mongoose-unique-validator');
 var passportLocalMongoose = require ('passport-local-mongoose');
 
 //Create a schema
-var Aritcle = new Schema({
-    email: {
+var Article = new Schema({
+    title: {
         type: String,
-        required: [true, 'Please enter an email'],
-        unique: [true, 'Email must be unique']
+        required: [true, 'Please enter a title'],
+        unique: [true, 'Title must be unique']
     },
-    aritclename: {
+    
+
+    slug: {
         type: String,
-        required: [true, 'Please enter an aritclename'],
-        unique: [true, 'Aritclename must be unique']
-    },
-    first_name: String,
-    last_name: String,
-    admin: {
-        type: Boolean,
-        default: false
+        required: [true, 'Please enter a slug'],
+        unique: [true, 'Please use a different Slug']
     },
 
-    hash: {
+    keywords: {
+        type: String,
+    },
+    description: {
+        type: String,
+    },
+    body: {
+        type: String,
+    },
+
+    /*hash: {
         type: String,
         required: [
             true,
@@ -35,11 +41,19 @@ var Aritcle = new Schema({
             true,
             'there was a problem creating your article name'  
         ]
-    },
+    },*/
 
     created:{
         type: Date,
         default: Date.now
+    },
+
+    published:{
+        type: Date,
+        required: [
+            true,
+            'Please enter a publication date.',
+        ]
     },
     modified:{
         type: Date,
@@ -53,6 +67,6 @@ Aritcle.pre('save', function(next){
 });
 
 Aritcle.plugin(uniqueValidator);
-Aritcle.plugin(passportLocalMongoose);
+
 
 module.exports = mongoose.model('Aritcle', Aritcle);
