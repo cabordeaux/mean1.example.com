@@ -1,19 +1,22 @@
-//var createError = require('http-errors');
+var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-//var session = require('express-session');
+var session = require('express-session');
 var mongoose = require('mongoose');
 var User = require('./models/user');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var apiUsersRouter = require('./routes/api/users');
-
+var articlesRouter = require('./routes/api/articles');
 var app = express();
 
 //call the config file
 var config = require('./config.dev');
+
+//Test the file
+console.log(config);
 
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
@@ -30,14 +33,14 @@ app.use(require('express-session')({
   secret: config.secret,
   resave: false,
   saveUninitialized: false/*,
-  cookie: {
+  cookie: {040218SX/mean.example.com 
     path: '/',
     domain: config.cookie.domain,
     //httpOnly: true,
     //secure: true,
     maxAge:  60 * 60 * 24 //24 hours
   }*/
-
+ 
 }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -50,14 +53,56 @@ passport.use(new LocalStrategy(
         return done(err)
       }
       if(!user){
-        return done(null, false)
+        return done(null, false)for(var sub of subs){
+    if(req.url.substring(0, sub.length)===sub){}
+    },
+    body: {
+        type: String,
+    },
+b.length)===sub){
+      return next();
+    }
+  }
+
+  if(req.isAuthenticated()){
+    return next();
+  }
+},
+body: {
+    type: String,
+},
+
+
+  return res.redirect('/users/login');
+});
       }
       if(!user. verifyPassword(password)){
         return done(null, false);   
       }
       return done(null,user);
     });
+  }for(var sub of subs){
+    if(req.url.substring(0, sub.length)===sub){}
+    },
+    body: {
+        type: String,
+    },
+b.length)===sub){
+      return next();
+    }
   }
+
+  if(req.isAuthenticated()){
+    return next();
+  }
+},
+body: {
+    type: String,
+},
+
+
+  return res.redirect('/users/login');
+});
 ));*/
 
 passport.use(User.createStrategy());
@@ -69,7 +114,7 @@ passport.serializeUser(function(user, done){
     email: user.email,
     first_name: user.first_name,
     last_name: user.last_name
-  })
+  });
 });
 
 passport.deserializeUser(function(user, done){
@@ -139,7 +184,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/api/users', apiUsersRouter);
-
+app.use('/articles', articlesRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

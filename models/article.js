@@ -1,7 +1,6 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var uniqueValidator = require('mongoose-unique-validator');
-var passportLocalMongoose = require ('passport-local-mongoose');
 
 //Create a schema
 var Article = new Schema({
@@ -59,7 +58,7 @@ Article.pre('save', function(next){
 
 });
 
-Article.plugin(uniqeValidator);
+Article.plugin(uniqueValidator);
 
 
-module.exports = mongoose.model('Aritcle', Aritcle);
+module.exports = mongoose.model('Article', Article);
