@@ -96,12 +96,14 @@ app.use(function(req, res, next){
 
 //Session based access control
 app.use(function(req,res,next){
-  //return next();
+  return next();
 
   var whitelist = [
     '/',
     '/favicon.ico',
-    '/users/login'
+    '/users/login',
+    '/users/register',
+
   ];
 
   if(whitelist.indexOf(req.url) !== -1){
@@ -110,6 +112,7 @@ app.use(function(req,res,next){
   //Allow access to dynamic end points
   var subs = [
     '/stylesheets/',
+    '/src',
   ];
 
   for(var sub of subs){
@@ -142,7 +145,6 @@ app.use('/api/users', apiUsersRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  next(createError(404));
 });
 
 // error handler
