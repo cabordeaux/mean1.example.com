@@ -121,7 +121,7 @@ var router = express.Router();
 var User = require('../../models/user');
 var bodyParser = require('body-parser');
 router.use(bodyParser.json());
-router.use(bodyParser.urlencoded({extended:false}));a>
+router.use(bodyParser.urlencoded({extended:false}));
             
 
 /* GET users listing. */
@@ -160,7 +160,7 @@ var router = express.Router();
 var User = require('../../models/user');
 var bodyParser = require('body-parser');
 router.use(bodyParser.json());
-router.use(bodyParser.urlencoded({extended:false}));a>
+router.use(bodyParser.urlencoded({extended:false}));
             
 
 /* GET users listing. */
@@ -262,12 +262,61 @@ router.put('/', function(req,res,next){
 router.delete('/:userId', function(req,res,next){
   var userId = req.params.userId;
 
-  User.remove({'_id':userId}, function(err,removed){//Register a new user
+  User.remove({'_id':userId}, function(err,removed){
+
+    if(err){
+      return res.json({success:false, error:err});
+    }
+    return res.json({success:true, status: removed});
+      viewIndex();
+router.put('/', function(req,res,next){
+
+  //find the record of the user to be updated
+  User.findOne(
+    {'_id': req.body._id}, 
+    function(err, user){
+
+    //return false if the user is not found
+    if(err){
+      return res.json({'success':true, error:err});
+    }
+
+    //If the user is found, update the record
+    if(user){
+      //Only update values that were passed to the enpoint
+        let data = req.body;
+      
+        if(data.username){
+          user.username = data.username;
+        }
+        if(data.email){
+          user.email = data.email;
+        }
+        if(data.last_name){
+          user.last_name = data.last_name;
+        }
+        if(data.first_name){
+          user.first_name = data.first_name;
+        }
+
+        user.save(function(err){
+          if(err){
+            return res.json({success:false, error: err}); 
+          }
+
+          return res.json({success:true, user:user});
+
+        });
+      }
+    });  
+});    
+    //Register a new user
     
     if(err){
       return res.json({success:false, error:err});
     }
     return res.json({success:true, status: removed});
+
     var express = require('express');
     var router = express.Router();
     

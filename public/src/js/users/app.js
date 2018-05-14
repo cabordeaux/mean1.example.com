@@ -1,5 +1,5 @@
 function viewIndex(){
-    var url = 'http://localhost:3000/api/users';
+    var url = 'http://loc.mean.example.com/api/users';
 
     var xhr = new XMLHttpRequest();
     xhr.open('GET', url);
@@ -40,7 +40,7 @@ function viewIndex(){
 }
 
 function viewUser(id){
-    var url = 'http://localhost:3000/api/users/' + id;
+    var url = 'http://loc.mean.example.com/api/users/' + id;
 
     var xhr = new XMLHttpRequest();
     xhr.open('GET', url);
@@ -73,6 +73,19 @@ function viewUser(id){
                         name="username" 
                         id="username" 
                         value="${user.username}">
+                </div>
+
+                <h3>Delete the User Record</h3>
+                <form id="deleteUser" action="/api/users/${user._id}" method="delete">
+                <input type="hidden" name="_id" value="${user._id}">   
+                <div>
+                    <label for="username">Username</label>
+                    <input 
+                        type="text" 
+                        name="username" 
+                        id="username" 
+                        value="${user.username}">
+                        <button type="button" onclick="alert('Are you Sure?')">Delete User</button>
                 </div>
 
                 <div>
@@ -109,7 +122,7 @@ function viewUser(id){
         editUser.addEventListener('submit', function(e){
             e.preventDefault();
             var formData = new FormData(editUser);
-            var url = 'http://localhost:3000/api/users';
+            var url = 'http://loc.mean.example.com/api/users';
             var xhr = new XMLHttpRequest();
             xhr.open('PUT', url);
             xhr.setRequestHeader(
@@ -166,7 +179,7 @@ function createUser(){
         e.preventDefault();
 
         var formData = new FormData(createUser);
-        var url = 'http://localhost:3000/api/users';
+        var url = 'http://loc.mean.example.com/api/users';
         var xhr = new XMLHttpRequest();
         xhr.open('POST', url);
 
@@ -189,7 +202,22 @@ function createUser(){
         }
     });
 }
+function deleteUser(){
+    var url = 'http://loc.mean.example.com/api/users/' + id;
 
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url);
+    xhr.send();
+
+    xhr.onload = function(){
+        let data = JSON.parse(xhr.response);
+        if(data.success===true){
+            viewIndex();
+        }
+        
+    }
+
+}
 var hash = window.location.hash.substr(1);
 if(hash){
     let chunks = hash.split('-');

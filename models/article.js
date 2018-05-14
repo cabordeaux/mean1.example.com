@@ -1,58 +1,66 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
-var uniqueValidator = require('mongoose-unique-validator');
-var passportLocalMongoose = require ('passport-local-mongoose');
+
+var mongoose = require('mongoose'),
+  Schema = mongoose.Schema,
+  uniqueValidator = require('mongoose-unique-validator'),
+  slug = require('slug');
 
 //Create a schema
-var Aritcle = new Schema({
-    email: {
-        type: String,
-        required: [true, 'Please enter an email'],
-        unique: [true, 'Email must be unique']
-    },
-    aritclename: {
-        type: String,
-        required: [true, 'Please enter an aritclename'],
-        unique: [true, 'Aritclename must be unique']
-    },
-    first_name: String,
-    last_name: String,
-    admin: {
-        type: Boolean,
-        default: false
-    },
+var Article = new Schema({
+  title: {
+    type: String,
+    required: [true, 'Please enter a title'],
+    unique: [true, 'Title is already in use']
+  },
+    keywords: String,
+    description: String,
+    author: String,
+    body: String,
+    comments: [{ body: String, date: Date }],
+    date: { type: Date, default: Date.now },
+    hidden: Boolean,
+    meta: {
+      votes: Number,
+      favs:  Number,
+  },    
 
-    hash: {
-        type: String,
-        required: [
-            true,
-            'there was a problem creating your article name'
-        ]
-    },
-    salt: {
-        type: String,
-        required: [
-            true,
-            'there was a problem creating your article name'  
-        ]
-    },
-
-    created:{
-        type: Date,
-        default: Date.now
-    },
-    modified:{
-        type: Date,
-        default: Date.now
-    }
+  slug: {
+    type: String,
+    required: [true, 'Please enter a slug'],
+    unique: [true, 'Slug is already in use']
+  },
+ 
+  
+  created: {
+    type: Date,
+    default: Date.now
+  },
+  modified: {
+    type: Date,
+    default: Date.now
+  },
+  published: {
+    type: Date
+    //required: [true, 'Please enter a pub date'],
+  },
+  deleted: {
+    type: Date
+  }
 });
 
-Aritcle.pre('save', function(next){
-    this.modified = new Date().toISOString();
-    next();
+//Auto set the slug prior to validation
+Article.pre('validate', function(next){
+  this.slug = slug(this.title).toLowerCase();
+  next();
 });
 
-Aritcle.plugin(uniqueValidator);
-Aritcle.plugin(passportLocalMongoose);
+//Auto set the modified date prior to save
+Article.pre('save', function(next){
+  this.modified = new Date().toISOString();
+  next();
+});
 
-module.exports = mongoose.model('Aritcle', Aritcle);
+Article.plugin(uniqueValidator);
+
+module.exports  = mongoose.model('Article', Article);
+
+
