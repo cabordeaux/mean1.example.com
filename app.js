@@ -1,16 +1,26 @@
+//Libs
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var session = require('express-session');
+var session = require('express-session'); 
 var mongoose = require('mongoose');
+var compression = require('compression');
+var helmet = require('helmet');
+
+//Models
 var User = require('./models/user');
+
+//Routes
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+//var apiArticlesRouter = require('./routes/api/articles');
 var apiUsersRouter = require('./routes/api/users');
 
 var app = express();
+app.use(compression());
+app.use(helmet());
 
 //call the config file
 var config = require('./config.dev');
@@ -18,7 +28,7 @@ var config = require('./config.dev');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 
-//connect to MongDB
+//Connect to MongoDB
 mongoose.connect(config.mongodb);
 
 var MongoStore = require('connect-mongo')(session);
@@ -35,30 +45,12 @@ app.use(require('express-session')({
     domain: config.cookie.domain,
     //httpOnly: true,
     //secure: true,
-    maxAge:  60 * 60 * 24 //24 hours
+    maxAge: 60 * 60 * 24 * 1000 //24 hours
   }*/
-
 }));
+
 app.use(passport.initialize());
 app.use(passport.session());
-
-/*
-passport.use(new LocalStrategy(
-  function(username, password, done){
-    User.findOne9({username:username}, function(err, user){
-      if(err) {
-        return done(err)
-      }
-      if(!user){
-        return done(null, false)
-      }
-      if(!user. verifyPassword(password)){
-        return done(null, false);   
-      }
-      return done(null,user);
-    });
-  }
-));*/
 
 passport.use(User.createStrategy());
 
@@ -69,29 +61,30 @@ passport.serializeUser(function(user, done){
     email: user.email,
     first_name: user.first_name,
     last_name: user.last_name
-  })
+  });
 });
 
 passport.deserializeUser(function(user, done){
   done(null, user);
-
 });
 
 //Set up view variables
 app.use(function(req, res, next){
-  
-    var userSession={};
 
-   if(req.isAuthenticated()){
-     userSession = req.session.passport.user;
-     /*console.log(req.session.passport.user);*/
-   } 
-   req.app.locals = {
-     session: {
-       user:userSession
-     }
-   }
-   next();
+  var userSession={};
+
+  if(req.isAuthenticated()){
+    userSession = req.session.passport.user;
+  }
+
+  req.app.locals = {
+    session: {
+      user: userSession
+    }
+
+  }
+
+  next();
 });
 
 //Session based access control
@@ -102,17 +95,17 @@ app.use(function(req,res,next){
     '/',
     '/favicon.ico',
     '/users/login',
-    '/users/register',
-
+    '/users/register'
   ];
 
   if(whitelist.indexOf(req.url) !== -1){
     return next();
   }
+
   //Allow access to dynamic end points
   var subs = [
     '/stylesheets/',
-    '/src',
+    '/src/',
   ];
 
   for(var sub of subs){
@@ -128,6 +121,19 @@ app.use(function(req,res,next){
   return res.redirect('/users/login');
 });
 
+//SETUP CORS
+app.use(function(req,res,next){
+  res.header('Access-Control-Allow-Credentials', true);
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
+  if( 'OPTIONS' == req.method){
+    res.send(200);
+  }else{
+    next();
+  }
+});
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
@@ -140,11 +146,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+//app.use('/api/artciles', apiArticlesRouter);
 app.use('/api/users', apiUsersRouter);
-
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
+  next(createError(404));
 });
 
 // error handler

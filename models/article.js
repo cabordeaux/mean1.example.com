@@ -2,7 +2,8 @@
 var mongoose = require('mongoose'),
   Schema = mongoose.Schema,
   uniqueValidator = require('mongoose-unique-validator'),
-  slug = require('slug');
+  slug = require('slug'),
+  passportLocalMongoose = require('passport-local-mongoose');
 
 //Create a schema
 var Article = new Schema({
