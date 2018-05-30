@@ -15,22 +15,18 @@ var User = require('./models/user');
 //Routes
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-//var apiArticlesRouter = require('./routes/api/articles');
+var apiArticlesRouter = require('./routes/api/articles');
 var apiUsersRouter = require('./routes/api/users');
-
 var app = express();
 app.use(compression());
 app.use(helmet());
 
 //call the config file
 if(process.env.NODE_ENV==='production'){
-  
-  var config = require('../config.production');
-}else{var config = require('./config.dev');
-  
+  var config = require('../config.prod');
+}else{
+  var config = require('./config.dev');
 }
-
-
 
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
@@ -88,7 +84,6 @@ app.use(function(req, res, next){
     session: {
       user: userSession
     }
-
   }
 
   next();
@@ -97,7 +92,6 @@ app.use(function(req, res, next){
 //Session based access control
 app.use(function(req,res,next){
   return next();
-
   var whitelist = [
     '/',
     '/favicon.ico',
@@ -153,7 +147,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-//app.use('/api/artciles', apiArticlesRouter);
+app.use('/api/articles', apiArticlesRouter);
 app.use('/api/users', apiUsersRouter);
 
 // catch 404 and forward to error handler

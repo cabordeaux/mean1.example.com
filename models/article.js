@@ -50,11 +50,15 @@ var Article = new Schema({
 
 //Auto set the slug prior to validation
 Article.pre('validate', function(next){
+
+  if(this.title){
   this.slug = slug(this.title).toLowerCase();
+  }
   next();
 });
 
 //Auto set the modified date prior to save
+
 Article.pre('save', function(next){
   this.modified = new Date().toISOString();
   next();
