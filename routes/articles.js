@@ -1,35 +1,39 @@
 var express = require('express');
 var router = express.Router();
-var passport = require('passport');
 var Article = require('../models/article');
 
+
 router.get('/', function(req, res, next){
-  
-  res.render('articles/index', {title: 'Article Management'});
-});
 
-/* GET home page. */
-router.get('/register', function(req, res, next) {
-  res.render('articles/register', {
-     title: 'Create an Article'
+  Article.find({}, function(err, articles){
+
+    //if(err){
+    //  return res.json({'success':false, 'error': err});
+    //}
+
+    res.render('articles/index', {
+      'articles': articles
+    });
+
   });
-});
-
-router.get('/login',function(req, res, next){
-  res.render('articles/login', {title: 'Login'});
-});
-
-router.post(
-  '/login', 
-  passport.authenticate('local'),
-  function(req, res, next){
-    res.redirect('/articles');
 
 });
 
-router.get('logout', function(req, res, next){
-  req.logout();
-  res.redirect('/articles/login');
+router.get('/:slug', function(req, res,next) {
+
+    var slug = req.params.slug;
+  
+    Article.findOne({'slug':slug}, function(err, article){
+  
+      //if(err){
+      //  return res.json({'success':false, 'error': err});
+      //}
+  
+     res.render('articles/view', {
+       'article': article});
+  
+    });
+ 
 });
 
 module.exports = router;
