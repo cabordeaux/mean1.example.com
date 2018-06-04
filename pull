@@ -1,4 +1,4 @@
-!/bin/bash
+#!/bin/bash
 
-git pull origin master && npm install && pm2 restart process.yml
+git pull origin master && npm install && pm2 restart process.yml --env production
 

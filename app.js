@@ -97,7 +97,9 @@ app.use(function(req,res,next){
     '/',
     '/favicon.ico',
     '/users/login',
-    '/users/register'
+    '/users/register',
+    '/api/users/register',
+    '/articles'
   ];
 
   if(whitelist.indexOf(req.url) !== -1){
@@ -107,7 +109,8 @@ app.use(function(req,res,next){
   //Allow access to dynamic end points
   var subs = [
     '/stylesheets/',
-    '/src/'
+    '/src/',
+    '/articles/'
   ];
 
   for(var sub of subs){
