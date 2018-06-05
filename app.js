@@ -24,9 +24,9 @@ app.use(helmet());
 
 //call the config file
 if(process.env.NODE_ENV==='production'){
-  var config = require('../config.prod');
+  var config = require('../config.production');
 }else{
-  var config = require('../config.prod');
+  var config = require('./config.dev');
 }
 
 var passport = require('passport');
