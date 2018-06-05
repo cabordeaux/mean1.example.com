@@ -26,7 +26,7 @@ app.use(helmet());
 if(process.env.NODE_ENV==='production'){
   var config = require('../config.prod');
 }else{
-  var config = require('./config.dev');
+  var config = require('../config.prod');
 }
 
 var passport = require('passport');
